@@ -15,7 +15,6 @@ export default class Burger extends Component {
         console.log(transfromIngridient)
 
         if(transfromIngridient.length === 0){
-            debugger
             transfromIngridient = <p>Please add some Ingrideint</p>
         }
         return (
