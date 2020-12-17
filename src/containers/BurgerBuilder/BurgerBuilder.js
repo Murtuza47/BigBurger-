@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Burger from "../../components/Burger/Burger";
+import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
+import Modal from "../../components/UI/Modal/Modal";
 import Aux from "../../hoc/Auxillary";
 
 const INGRIDIENT_PRICE = {
@@ -20,11 +22,11 @@ export default class BurgerBuilder extends Component {
     },
     price: 10,
     purchaseable: false,
+    purchasing: false,
   };
 
   disabledOrderButton = () => {
     let ingridients = { ...this.state.ingridients };
-    debugger;
     let sum = Object.keys(ingridients)
       .map((igKey) => {
         return ingridients[igKey];
@@ -54,6 +56,18 @@ export default class BurgerBuilder extends Component {
       this.disabledOrderButton();
     });
   };
+
+  showingModal = () => {
+    this.setState({ purchasing: true });
+  };
+
+  onContinue = () => {
+    alert("You have continue");
+  };
+
+  closingModal = () => {
+    this.setState({ purchasing: false });
+  };
   render() {
     let disabledKey = { ...this.state.ingridients };
     for (let key in disabledKey) {
@@ -61,6 +75,16 @@ export default class BurgerBuilder extends Component {
     }
     return (
       <Aux>
+        <Modal
+          orderClick={this.state.purchasing}
+          modalClosed={this.closingModal}
+        >
+          <OrderSummary
+            ingridients={this.state.ingridients}
+            modalClosed={this.closingModal}
+            continueClicked={this.onContinue}
+          ></OrderSummary>
+        </Modal>
         <Burger ingridients={this.state.ingridients} />
         <BuildControls
           rI={this.removeIngridients}
@@ -68,6 +92,7 @@ export default class BurgerBuilder extends Component {
           disabledKeys={disabledKey}
           price={this.state.price}
           purchaseable={this.state.purchaseable}
+          purchasing={this.showingModal}
         />
       </Aux>
     );
