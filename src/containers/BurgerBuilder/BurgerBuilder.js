@@ -4,6 +4,9 @@ import Burger from "../../components/Burger/Burger";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 import Modal from "../../components/UI/Modal/Modal";
 import Aux from "../../hoc/Auxillary";
+import axios from "../../axios";
+import Spinner from "../../components/UI/Spinner/Spinner";
+import ErrorHandler from "../../hoc/errorHandler/ErrorHandler";
 
 const INGRIDIENT_PRICE = {
   meat: 35,
@@ -12,7 +15,7 @@ const INGRIDIENT_PRICE = {
   salad: 10,
 };
 
-export default class BurgerBuilder extends Component {
+class BurgerBuilder extends Component {
   state = {
     ingridients: {
       meat: 0,
@@ -23,6 +26,7 @@ export default class BurgerBuilder extends Component {
     price: 10,
     purchaseable: false,
     purchasing: false,
+    loader: false,
   };
 
   disabledOrderButton = () => {
@@ -62,7 +66,37 @@ export default class BurgerBuilder extends Component {
   };
 
   onContinue = () => {
-    alert("You have continue");
+    this.setState({
+      loader: true,
+    });
+    let data = {
+      ingridients: this.state.ingridients,
+      price: this.state.price,
+      customer: {
+        name: "Ali",
+        address: {
+          street: "Street No1",
+          zipCode: "0789",
+          country: "Pakistan",
+        },
+      },
+    };
+    axios
+      .post("/order.json", data)
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          loader: false,
+          purchasing: false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setState({
+          loader: false,
+          purchasing: false,
+        });
+      });
   };
 
   closingModal = () => {
@@ -73,17 +107,23 @@ export default class BurgerBuilder extends Component {
     for (let key in disabledKey) {
       disabledKey[key] = disabledKey[key] <= 0;
     }
+    let orderSummary = (
+      <OrderSummary
+        ingridients={this.state.ingridients}
+        modalClosed={this.closingModal}
+        continueClicked={this.onContinue}
+      ></OrderSummary>
+    );
+    if (this.state.loader) {
+      orderSummary = <Spinner />;
+    }
     return (
       <Aux>
         <Modal
           orderClick={this.state.purchasing}
           modalClosed={this.closingModal}
         >
-          <OrderSummary
-            ingridients={this.state.ingridients}
-            modalClosed={this.closingModal}
-            continueClicked={this.onContinue}
-          ></OrderSummary>
+          {orderSummary}
         </Modal>
         <Burger ingridients={this.state.ingridients} />
         <BuildControls
@@ -98,3 +138,5 @@ export default class BurgerBuilder extends Component {
     );
   }
 }
+
+export default ErrorHandler(BurgerBuilder, axios);
