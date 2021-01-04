@@ -8,6 +8,7 @@ const ErrorHandler = (WrappedComponent, axios) => {
       error: null,
     };
     componentDidMount() {
+      console.log(this.props);
       axios.interceptors.request.use(
         (request) => request,
         (error) => {
@@ -36,7 +37,7 @@ const ErrorHandler = (WrappedComponent, axios) => {
           >
             {this.state.error ? this.state.error.message : null}
           </Modal>
-          <WrappedComponent />
+          <WrappedComponent {...this.props} />
         </Aux>
       );
     }
