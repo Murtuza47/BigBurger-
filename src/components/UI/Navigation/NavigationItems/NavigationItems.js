@@ -5,10 +5,10 @@ import NavigationItem from "../NavigationItem/NavigationItem";
 export default function NavigationItems() {
   return (
     <ul className={classes.NavigationItems}>
-      <NavigationItem link="/" active>
+      <NavigationItem link="/burger" exact>
         Burger
       </NavigationItem>
-      <NavigationItem link="/">Checkout</NavigationItem>
+      <NavigationItem link="/orders">Orders</NavigationItem>
     </ul>
   );
 }
