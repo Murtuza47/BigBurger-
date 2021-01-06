@@ -7,9 +7,10 @@ const ErrorHandler = (WrappedComponent, axios) => {
     state = {
       error: null,
     };
+
     componentDidMount() {
       console.log(this.props);
-      axios.interceptors.request.use(
+      const request_interceptors = axios.interceptors.request.use(
         (request) => request,
         (error) => {
           this.setState({
@@ -18,7 +19,7 @@ const ErrorHandler = (WrappedComponent, axios) => {
         }
       );
 
-      axios.interceptors.response.use(
+      const response_interceptors = axios.interceptors.response.use(
         (response) => response,
         (error) => {
           this.setState({
@@ -26,6 +27,11 @@ const ErrorHandler = (WrappedComponent, axios) => {
           });
         }
       );
+    }
+
+    componentWillUnmount() {
+      axios.interceptors.request.eject(this.response_interceptors);
+      axios.interceptors.request.eject(this.request_interceptors);
     }
 
     render() {
