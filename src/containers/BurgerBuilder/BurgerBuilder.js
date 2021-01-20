@@ -7,6 +7,7 @@ import Aux from "../../hoc/Auxillary";
 import axios from "../../axios";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import ErrorHandler from "../../hoc/errorHandler/ErrorHandler";
+import { connect } from "react-redux";
 
 const INGRIDIENT_PRICE = {
   meat: 35,
@@ -23,10 +24,10 @@ class BurgerBuilder extends Component {
       cheese: 0,
       salad: 0,
     },
-    price: 10,
     purchaseable: false,
     purchasing: false,
     loader: false,
+    price: 10,
   };
 
   disabledOrderButton = () => {
@@ -88,13 +89,14 @@ class BurgerBuilder extends Component {
     this.setState({ purchasing: false });
   };
   render() {
-    let disabledKey = { ...this.state.ingridients };
+    console.log("props", this.props.ingridients);
+    let disabledKey = { ...this.props.ingridients };
     for (let key in disabledKey) {
       disabledKey[key] = disabledKey[key] <= 0;
     }
     let orderSummary = (
       <OrderSummary
-        ingridients={this.state.ingridients}
+        ingridients={this.props.ingridients}
         modalClosed={this.closingModal}
         continueClicked={this.onContinue}
       ></OrderSummary>
@@ -110,10 +112,12 @@ class BurgerBuilder extends Component {
         >
           {orderSummary}
         </Modal>
-        <Burger ingridients={this.state.ingridients} />
+        <Burger ingridients={this.props.ingridients} />
         <BuildControls
-          rI={this.removeIngridients}
-          aI={this.addIngridients}
+          // rI={() => this.removeIngridients}
+          // aI={this.addIngridients}
+          rI={(type) => this.props.removeIngridient(type)}
+          aI={(type) => this.props.addIngridient(type)}
           disabledKeys={disabledKey}
           price={this.state.price}
           purchaseable={this.state.purchaseable}
@@ -124,4 +128,19 @@ class BurgerBuilder extends Component {
   }
 }
 
-export default ErrorHandler(BurgerBuilder, axios);
+const mapStateToProps = (state) => {
+  return { ingridients: state.ingridients };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addIngridient: (addingr) =>
+      dispatch({ type: "ADDINGRIDIENT", value: addingr }),
+    removeIngridient: (remingr) =>
+      dispatch({ type: "REMOVEINGRIDIENT", value: remingr }),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ErrorHandler(BurgerBuilder, axios));

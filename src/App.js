@@ -13,6 +13,7 @@ export default class App extends Component {
         <Layout>
           <Switch>
             <Route path="/orders" component={Orders} />
+            <Route path="/checkout" component={CheckOut} />
             <Route path="/burger" exact component={BurgerBuilder} />
             <Redirect from="/" to="/burger" />
           </Switch>
