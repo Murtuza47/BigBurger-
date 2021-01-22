@@ -5,6 +5,7 @@ import withErrorHandler from "../../../hoc/errorHandler/ErrorHandler";
 import Spinner from "../../UI/Spinner/Spinner";
 import Input from "../../UI/Input/Input";
 import classes from "./ContactData.module.css";
+import { connect } from "react-redux";
 
 class ContactData extends Component {
   state = {
@@ -95,7 +96,7 @@ class ContactData extends Component {
         valid: true,
       },
     },
-    ingridients: null,
+    // ingridients: null,
     loader: false,
     formValidation: false,
   };
@@ -107,11 +108,11 @@ class ContactData extends Component {
   //       ingridients: props.ingridients,
   //     });
   //   }
-  componentDidMount() {
-    this.setState({
-      ingridients: this.props.ingridients,
-    });
-  }
+  // componentDidMount() {
+  //   this.setState({
+  //     ingridients: this.props.ingridients,
+  //   });
+  // }
 
   checkValidity(value, validation) {
     let validity = true;
@@ -140,8 +141,8 @@ class ContactData extends Component {
       street: this.state.orderForm.street.value,
     };
     let data = {
-      ingridients: this.state.ingridients,
-      price: 100,
+      ingridients: this.props.ingridients,
+      price: this.props.price,
       customer: customerInfo,
     };
     axios
@@ -151,6 +152,7 @@ class ContactData extends Component {
         this.setState({
           loader: false,
         });
+        this.props.history.push("/");
       })
       .catch((error) => {
         console.log(error);
@@ -240,4 +242,11 @@ class ContactData extends Component {
   }
 }
 
-export default withErrorHandler(ContactData, axios);
+const mapStateToProps = (state) => {
+  return {
+    ingridients: state.ingridients,
+    price: state.price,
+  };
+};
+
+export default connect(mapStateToProps)(withErrorHandler(ContactData, axios));

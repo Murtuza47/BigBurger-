@@ -1,3 +1,10 @@
+const INGRIDIENT_PRICE = {
+  meat: 35,
+  bacon: 25,
+  cheese: 55,
+  salad: 10,
+};
+
 const initialState = {
   ingridients: {
     meat: 0,
@@ -17,6 +24,7 @@ const reducer = (state = initialState, action) => {
           ...state.ingridients,
           [action.value]: state.ingridients[action.value] + 1,
         },
+        price: state.price + INGRIDIENT_PRICE[action.value],
       };
     case "REMOVEINGRIDIENT":
       return {
@@ -25,6 +33,7 @@ const reducer = (state = initialState, action) => {
           ...state.ingridients,
           [action.value]: state.ingridients[action.value] - 1,
         },
+        price: state.price - INGRIDIENT_PRICE[action.value],
       };
     default:
       return state;
